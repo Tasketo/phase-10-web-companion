@@ -1,0 +1,48 @@
+{
+  "name": "phase-10-web-companion",
+  "version": "0.1.0",
+  "author": "tasketo",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint src --ext ts,tsx",
+    "lint:fix": "eslint src --ext ts,tsx --fix",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "test:e2e": "rm -rf .nyc_output && playwright test",
+    "playwright:install": "playwright install --with-deps chromium",
+    "coverage:merge": "nyc merge .nyc_output .nyc_output/coverage-final.json",
+    "coverage:report": "nyc report --reporter=html --report-dir=.nyc_output/html --temp-dir=.nyc_output",
+    "coverage:html": "npm run coverage:merge && npm run coverage:report"
+  },
+  "dependencies": {
+    "i18next": "^25.8.14",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "primeicons": "^7.0.0",
+    "primereact": "^10.9.7",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-i18next": "^16.5.6"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.3.5",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
+    "eslint": "^9.39.3",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.4.0",
+    "istanbul-reports": "^3.2.0",
+    "nyc": "^18.0.0",
+    "prettier": "^3.8.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1",
+    "vite": "^7.3.1",
+    "vite-plugin-istanbul": "^7.2.1"
+  }
+}

@@ -1,0 +1,108 @@
+.setup-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.setup-card {
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.setup-content {
+  padding: 5px 20px 25px;
+  text-align: center;
+}
+
+.setup-content h1 {
+  margin-bottom: 8px;
+  font-size: 28px;
+  color: #333;
+}
+
+.setup-content .subtitle {
+  margin-bottom: 30px;
+  font-size: 16px;
+  color: #666;
+}
+
+.player-count-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.player-count-section label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.player-names-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.player-names-section h2 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.name-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.name-input-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.name-input-group input {
+  width: 100%;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.button-group button {
+  flex: 1;
+}
+
+.language-switcher {
+  display: flex;
+  justify-content: center;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .setup-content {
+    padding: 30px 16px;
+  }
+
+  .setup-content h1 {
+    font-size: 24px;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group button {
+    width: 100%;
+  }
+}

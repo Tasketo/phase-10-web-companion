@@ -1,0 +1,128 @@
+{
+  "phases": [
+    {
+      "number": 1,
+      "description": "2 sets of 3",
+      "requirements": [
+        {
+          "type": "set",
+          "count": 2,
+          "size": 3
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "description": "1 set of 3 + 1 run of 4",
+      "requirements": [
+        {
+          "type": "set",
+          "count": 1,
+          "size": 3
+        },
+        {
+          "type": "run",
+          "size": 4
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "description": "1 set of 4 + 1 run of 4",
+      "requirements": [
+        {
+          "type": "set",
+          "count": 1,
+          "size": 4
+        },
+        {
+          "type": "run",
+          "size": 4
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "description": "Run of 7",
+      "requirements": [
+        {
+          "type": "run",
+          "size": 7
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "description": "Run of 8",
+      "requirements": [
+        {
+          "type": "run",
+          "size": 8
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "description": "Run of 9",
+      "requirements": [
+        {
+          "type": "run",
+          "size": 9
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "description": "2 sets of 4",
+      "requirements": [
+        {
+          "type": "set",
+          "count": 2,
+          "size": 4
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "description": "7 cards of one color",
+      "requirements": [
+        {
+          "type": "color",
+          "count": 7
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "description": "1 set of 5 + 1 set of 2",
+      "requirements": [
+        {
+          "type": "set",
+          "count": 1,
+          "size": 5
+        },
+        {
+          "type": "set",
+          "count": 1,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "description": "1 set of 5 + 1 set of 3",
+      "requirements": [
+        {
+          "type": "set",
+          "count": 1,
+          "size": 5
+        },
+        {
+          "type": "set",
+          "count": 1,
+          "size": 3
+        }
+      ]
+    }
+  ]
+}

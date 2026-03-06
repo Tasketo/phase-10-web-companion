@@ -1,0 +1,21 @@
+.app {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile-first layout */
+@media (max-width: 768px) {
+  .app {
+    padding: 0;
+  }
+}
+
+/* Desktop layout */
+@media (min-width: 769px) {
+  .app {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}

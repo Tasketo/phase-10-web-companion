@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.DS_Store
+*.local
+.env
+.env.local
+*.log
+results/
+test-results/
+playwright/.auth
+dist
+.nyc_output
