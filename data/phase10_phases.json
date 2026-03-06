@@ -123,6 +123,143 @@
           "size": 3
         }
       ]
+    },
+    {
+      "number": 1,
+      "description": "5 cards of one color + 1 run of 3",
+      "requirements": [
+        {
+          "type": "color",
+          "count": 5
+        },
+        {
+          "type": "run",
+          "size": 3
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "description": "4 sets of 2",
+      "requirements": [
+        {
+          "type": "set",
+          "count": 4,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "description": "1 set of 3 + 1 run of 4",
+      "requirements": [
+        {
+          "type": "set",
+          "count": 1,
+          "size": 3
+        },
+        {
+          "type": "run",
+          "size": 4
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "description": "2 runs of 4",
+      "requirements": [
+        {
+          "type": "run",
+          "size": 4
+        },
+        {
+          "type": "run",
+          "size": 4
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "description": "6 cards of one color + 1 set of 3",
+      "requirements": [
+        {
+          "type": "color",
+          "count": 6
+        },
+        {
+          "type": "set",
+          "count": 1,
+          "size": 3
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "description": "Run of 8",
+      "requirements": [
+        {
+          "type": "run",
+          "size": 8
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "description": "1 set of 2 + 1 set of 3 + 1 set of 4",
+      "requirements": [
+        {
+          "type": "set",
+          "count": 1,
+          "size": 2
+        },
+        {
+          "type": "set",
+          "count": 1,
+          "size": 3
+        },
+        {
+          "type": "set",
+          "count": 1,
+          "size": 4
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "description": "2 sets of 4",
+      "requirements": [
+        {
+          "type": "set",
+          "size": 4,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "description": "Run of 9",
+      "requirements": [
+        {
+          "type": "run",
+          "size": 9
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "description": "1 set of 5 + 1 set of 3",
+      "requirements": [
+        {
+          "type": "set",
+          "count": 1,
+          "size": 5
+        },
+        {
+          "type": "set",
+          "count": 1,
+          "size": 3
+        }
+      ]
     }
   ]
 }
