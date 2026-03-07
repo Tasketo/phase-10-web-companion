@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './i18n';
 import './App.css';
-import { type GameState, loadGameState, saveGameState } from './helpers/gameState';
+import { type GameState, loadGameState, saveGameState, type Phase } from './helpers/gameState';
 import SetupScreen from './screens/SetupScreen';
 import GameScreen from './screens/GameScreen';
 
@@ -15,7 +15,11 @@ function App() {
     }
   }, [gameState]);
 
-  const handleStartGame = (players: Array<{ id: string; name: string }>) => {
+  const handleStartGame = (
+    players: Array<{ id: string; name: string }>,
+    phases: Phase[],
+    phaseSetType: 'classic' | 'random',
+  ) => {
     const newGameState: GameState = {
       players: players.map((p) => ({
         ...p,
@@ -25,6 +29,8 @@ function App() {
       currentHand: 1,
       handResults: [],
       currentPhaseIndex: 0,
+      phases,
+      phaseSetType,
     };
     setGameState(newGameState);
   };

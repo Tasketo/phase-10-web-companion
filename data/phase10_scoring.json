@@ -1,8 +1,0 @@
-{
-  "scoring": {
-    "numberCardSingleDigit": 5,
-    "numberCardDoubleDigit": 10,
-    "skipCard": 15,
-    "wildCard": 20
-  }
-}

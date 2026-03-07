@@ -4,7 +4,6 @@ This repository is a starting point for implementing a digital version of the cl
 
 - `docs/phase10_rules.md` — canonical rules reference for the classic game.
 - `data/phase10_phases.json` — structured definition of the 10 phases.
-- `data/phase10_scoring.json` — standard scoring table used for penalty points.
 
 ## Code guidelines
 

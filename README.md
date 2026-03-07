@@ -27,23 +27,26 @@ This app is not a full digital version of Phase 10. Instead, it helps players wh
 - [x] Runs **entirely in the browser** (no backend, no login).
 - [x] Retains game state if the page is **reloaded** (via browser storage).
 - [x] Provide a way to **reset** the game and clear stored state.
-- [ ] Should allow to change language to german
+- [x] Support **language switching** (English and German).
 
 ### Phase handling
 
 - [x] Use the **default classic phase list** (10 phases) initially.
-- [ ] (Future extension) Optionally support **random or custom phase sets**.
+- [x] Support **random or custom phase sets** — choose between classic or randomly generated phases.
+  - **Classic Phases**: Uses the traditional 10-phase sequence.
+  - **Random Phases**: Generates a random set of 10 phases ordered from easy to hard, with personalized difficulty balancing.
+  - **Regenerate Option**: When using random phases, players can regenerate new phases if they don't like the current set.
 
 ## 🧠 Project structure
 
 - `docs/phase10_rules.md` — canonical rules reference for the classic game.
-- `data/phase10_phases.json` — structured definition of the 10 phases.
-- `data/phase10_scoring.json` — scoring values for penalty points.
+- `data/phase10_phases.json` — structured definition of available phases.
 - `src/App.tsx` — main app component with game state management.
 - `src/helpers/gameState.ts` — game state types and localStorage persistence.
-- `src/screens/SetupScreen.tsx` — player setup form.
+- `src/helpers/phases.ts` — phase library, difficulty calculation, and random generation.
+- `src/screens/SetupScreen.tsx` — multi-step setup with player and phase selection.
 - `src/screens/GameScreen.tsx` — game play with score entry and leaderboard.
-- `tests/e2e/` — playwright e2e-tests.
+- `tests/e2e/` — playwright e2e-tests covering all features.
 
 ## 🧱 Tech stack
 
