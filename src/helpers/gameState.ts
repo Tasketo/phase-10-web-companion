@@ -2,6 +2,17 @@
  * Core game state types and persistence logic
  */
 
+export type Phase = {
+  description: string;
+  requirements: Requirement[];
+};
+
+export type Requirement = {
+  type: 'set' | 'run' | 'color';
+  count?: number;
+  size?: number;
+};
+
 export type Player = {
   id: string;
   name: string;
@@ -20,10 +31,12 @@ export type GameState = {
   currentHand: number;
   handResults: HandResult[];
   currentPhaseIndex: number; // which phase are we currently in (0-9)
+  phases: Phase[]; // selected phases for this game
+  phaseSetType: 'classic' | 'random'; // which type of phase set was selected
 };
 
 const STORAGE_KEY = 'phase10-web.state';
-const STORAGE_VERSION = 1;
+const STORAGE_VERSION = 2;
 
 interface StorageData {
   version: number;

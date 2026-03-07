@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import { InputNumber } from 'primereact/inputnumber';
 import { Checkbox } from 'primereact/checkbox';
 import type { GameState, Player, HandResult } from '../helpers/gameState';
-import PHASES_DATA from '../../data/phase10_phases.json';
 import './GameScreen.css';
 
 interface GameScreenProps {
@@ -32,11 +31,34 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameState, onGameStateChange, o
   );
 
   const getPhaseDescription = (phaseIndex: number): string => {
-    if (phaseIndex < 0 || phaseIndex >= PHASES_DATA.phases.length) {
+    if (phaseIndex < 0 || phaseIndex >= gameState.phases.length) {
       return t('game.gameComplete');
     }
-    const phaseKey = `phases.phase${phaseIndex + 1}` as const;
-    return t(phaseKey);
+    const phase = gameState.phases[phaseIndex];
+    // Map description to translation key
+    const descriptionToKeyMap: Record<string, string> = {
+      '2 sets of 3': 'phaseDescriptions.twoSetsOfThree',
+      '1 set of 3 + 1 run of 4': 'phaseDescriptions.oneSetOfThreeAndOneRunOfFour',
+      '1 set of 4 + 1 run of 4': 'phaseDescriptions.oneSetOfFourAndOneRunOfFour',
+      'Run of 7': 'phaseDescriptions.runOfSeven',
+      'Run of 8': 'phaseDescriptions.runOfEight',
+      'Run of 9': 'phaseDescriptions.runOfNine',
+      '2 sets of 4': 'phaseDescriptions.twoSetsOfFour',
+      '7 cards of one color': 'phaseDescriptions.sevenCardsOfOneColor',
+      '1 set of 5 + 1 set of 2': 'phaseDescriptions.oneSetOfFiveAndOneSetOfTwo',
+      '1 set of 5 + 1 set of 3': 'phaseDescriptions.oneSetOfFiveAndOneSetOfThree',
+      '5 cards of one color + 1 run of 3': 'phaseDescriptions.fiveCardsOfOneColorAndOneRunOfThree',
+      '4 sets of 2': 'phaseDescriptions.fourSetsOfTwo',
+      '2 runs of 4': 'phaseDescriptions.twoRunsOfFour',
+      '6 cards of one color + 1 set of 3': 'phaseDescriptions.sixCardsOfOneColorAndOneSetOfThree',
+      '1 set of 2 + 1 set of 3 + 1 set of 4': 'phaseDescriptions.oneSetOfTwoAndOneSetOfThreeAndOneSetOfFour',
+    };
+    const translationKey = descriptionToKeyMap[phase.description];
+    if (translationKey) {
+      return `Phase ${phaseIndex + 1}: ${t(translationKey)}`;
+    }
+    // Fallback to raw description
+    return `Phase ${phaseIndex + 1}: ${phase.description}`;
   };
 
   const handlePenaltyChange = (playerId: string, score: number) => {
@@ -101,7 +123,18 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameState, onGameStateChange, o
     <div className="game-screen">
       <header className="game-header">
         <h1>
-          {t('game.handLabel')} {gameState.currentHand}
+          <Trans
+            i18nKey="game.leaderboardWithHand"
+            values={{
+              leaderboard: t('game.leaderboardTitle'),
+              hand: t('game.handLabel'),
+              number: gameState.currentHand,
+            }}
+          >
+            <span>{t('game.leaderboardTitle')}</span>
+            <span>{t('game.handLabel')}</span>
+            <span>{gameState.currentHand}</span>
+          </Trans>
         </h1>
         <Button label={t('game.resetGameButton')} icon="pi pi-refresh" severity="warning" onClick={onResetGame} text />
       </header>
@@ -150,16 +183,22 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameState, onGameStateChange, o
           </Card>
         ) : (
           <Card>
-            <h2>
-              {t('game.leaderboardTitle')} - {t('game.handLabel')} {gameState.currentHand}
-            </h2>
+            <h2>{t('game.leaderboardTitle')}</h2>
             <div className="leaderboard">
               {sortedPlayers.map((player, index) => (
                 <div key={player.id} className="leaderboard-row">
-                  <span className="rank">#{index + 1}</span>
+                  <span className="rank">
+                    <Trans i18nKey="leaderboard.rank" values={{ number: index + 1 }}>
+                      #{{ number: index + 1 }}
+                    </Trans>
+                  </span>
                   <span className="name">{player.name}</span>
                   <span className="phase">{getPhaseDescription(player.currentPhaseIndex)}</span>
-                  <span className="score">{t('leaderboard.totalScore', { score: player.totalScore })}</span>
+                  <span className="score">
+                    <Trans i18nKey="leaderboard.totalScore" values={{ score: player.totalScore }}>
+                      {{ score: player.totalScore }} pts
+                    </Trans>
+                  </span>
                 </div>
               ))}
             </div>

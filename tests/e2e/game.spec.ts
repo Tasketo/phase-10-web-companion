@@ -20,6 +20,14 @@ async function setupGameWithPlayers(page: Page, playerNames: string[]) {
     await currentInput.fill(playerNames[i]);
   }
 
+  // Click continue to go to phase selection
+  const continueButton2 = page.locator('button', { hasText: 'Continue' });
+  await continueButton2.click();
+
+  // Select classic phases
+  const classicButton = page.locator('button', { hasText: 'Classic Phases' });
+  await classicButton.click();
+
   // Start game - wait for button to be enabled
   const startButton = page.locator('button', { hasText: 'Start Game' });
   await startButton.click();
