@@ -175,7 +175,7 @@ const resources: {
 
       // Phase Descriptions
       phaseDescriptions: {
-        twoSetsOfThree: '2 Zwillinge',
+        twoSetsOfThree: '2 Drillinge',
         oneSetOfThreeAndOneRunOfFour: '1 Drilling + 1 Viererfolge',
         oneSetOfFourAndOneRunOfFour: '1 Vierling + 1 Viererfolge',
         runOfSeven: '1 Siebenerfolge',
