@@ -274,6 +274,6 @@ test('should handle three player game with mixed completions', async ({ page }) 
   expect(names[2]).toContain('Charlie');
 
   // Verify phases appear in leaderboard
-  const phases = await leaderboardRows.locator('.phase').allTextContents();
+  const phases = await page.locator('.leaderboard-entry').locator('.phase').allTextContents();
   expect(phases.length).toBe(3);
 });
