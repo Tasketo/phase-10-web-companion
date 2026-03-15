@@ -186,19 +186,17 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameState, onGameStateChange, o
             <h2>{t('game.leaderboardTitle')}</h2>
             <div className="leaderboard">
               {sortedPlayers.map((player, index) => (
-                <div key={player.id} className="leaderboard-row">
-                  <span className="rank">
-                    <Trans i18nKey="leaderboard.rank" values={{ number: index + 1 }}>
-                      #{{ number: index + 1 }}
-                    </Trans>
-                  </span>
-                  <span className="name">{player.name}</span>
-                  <span className="phase">{getPhaseDescription(player.currentPhaseIndex)}</span>
-                  <span className="score">
-                    <Trans i18nKey="leaderboard.totalScore" values={{ score: player.totalScore }}>
-                      {{ score: player.totalScore }} pts
-                    </Trans>
-                  </span>
+                <div key={player.id} className="leaderboard-entry">
+                  <div key={player.id} className="leaderboard-row">
+                    <span className="rank">#{index + 1}</span>
+                    <span className="name">{player.name}</span>
+                    <span className="score">
+                      <Trans i18nKey="leaderboard.totalScore">{{ score: player.totalScore }} pts</Trans>
+                    </span>
+                  </div>
+                  <div>
+                    <span className="phase">{getPhaseDescription(player.currentPhaseIndex)}</span>
+                  </div>
                 </div>
               ))}
             </div>
