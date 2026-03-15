@@ -38,7 +38,6 @@ const resources: {
         gameComplete: string;
       };
       leaderboard: {
-        rank: string;
         totalScore: string;
       };
       phaseDescriptions: {
@@ -103,7 +102,6 @@ const resources: {
 
       // Leaderboard
       leaderboard: {
-        rank: '<0>{{number}}</0>',
         totalScore: '<0>{{score}}</0> pts',
       },
 
@@ -169,7 +167,6 @@ const resources: {
 
       // Leaderboard
       leaderboard: {
-        rank: '<0>{{number}}</0>',
         totalScore: '<0>{{score}}</0> Punkte',
       },
 
