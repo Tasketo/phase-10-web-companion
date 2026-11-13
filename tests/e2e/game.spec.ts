@@ -57,7 +57,7 @@ test('should allow entering penalty scores', async ({ page }) => {
   await setupGameWithPlayers(page, ['Alice', 'Bob']);
 
   // Enter penalty scores
-  const scoreInputs = page.locator('.p-inputnumber input');
+  const scoreInputs = page.locator('.score-input');
   await scoreInputs.nth(0).fill('25');
   await scoreInputs.nth(1).fill('15');
 
@@ -69,12 +69,8 @@ test('should allow entering penalty scores', async ({ page }) => {
 test('should allow marking players as completed phase', async ({ page }) => {
   await setupGameWithPlayers(page, ['Alice', 'Bob', 'Charlie']);
 
-  // Click the checkbox input directly (not the box)
-  const checkboxInputs = page.locator('.p-checkbox-input');
-  await checkboxInputs.nth(0).click(); // Alice completed
-
-  // Verify checkbox is checked
-  const firstCheckbox = page.locator('.p-checkbox-input').nth(0);
+  const firstCheckbox = page.getByRole('checkbox').first();
+  await firstCheckbox.check();
   await expect(firstCheckbox).toBeChecked();
 });
 
@@ -82,13 +78,12 @@ test('should submit hand with scores and phase completions', async ({ page }) =>
   await setupGameWithPlayers(page, ['Alice', 'Bob']);
 
   // Enter scores
-  const scoreInputs = page.locator('.p-inputnumber input');
+  const scoreInputs = page.locator('.score-input');
   await scoreInputs.nth(0).fill('30');
   await scoreInputs.nth(1).fill('20');
 
   // Mark Alice as completed
-  const checkboxes = page.locator('.p-checkbox-input');
-  await checkboxes.nth(0).click();
+  await page.getByRole('checkbox').nth(0).check();
 
   // Submit
   const endButton = page.locator('button', { hasText: 'End Hand' });
@@ -102,7 +97,7 @@ test('should display leaderboard with correct scores', async ({ page }) => {
   await setupGameWithPlayers(page, ['Alice', 'Bob', 'Charlie']);
 
   // Enter various scores (Alice: 10, Bob: 25, Charlie: 15)
-  const scoreInputs = page.locator('.p-inputnumber input');
+  const scoreInputs = page.locator('.score-input');
   await scoreInputs.nth(0).fill('10');
   await scoreInputs.nth(1).fill('25');
   await scoreInputs.nth(2).fill('15');
@@ -136,10 +131,9 @@ test('should display phase progression in leaderboard', async ({ page }) => {
   await setupGameWithPlayers(page, ['Alice', 'Bob']);
 
   // Alice completes phase, Bob doesn't
-  const checkboxes = page.locator('.p-checkbox-input');
-  await checkboxes.nth(0).click();
+  await page.getByRole('checkbox').nth(0).check();
 
-  const scoreInputs = page.locator('.p-inputnumber input');
+  const scoreInputs = page.locator('.score-input');
   await scoreInputs.nth(0).fill('10');
   await scoreInputs.nth(1).fill('20');
 
@@ -161,7 +155,7 @@ test('should allow playing next hand', async ({ page }) => {
   await setupGameWithPlayers(page, ['Alice', 'Bob']);
 
   // Complete first hand
-  const scoreInputs = page.locator('.p-inputnumber input');
+  const scoreInputs = page.locator('.score-input');
   await scoreInputs.nth(0).fill('10');
   await scoreInputs.nth(1).fill('20');
 
@@ -177,7 +171,7 @@ test('should allow playing next hand', async ({ page }) => {
   await expect(page.locator('h2')).toContainText('Enter Scores');
 
   // Scores should be reset
-  const newScoreInputs = page.locator('.p-inputnumber input');
+  const newScoreInputs = page.locator('.score-input');
   expect(await newScoreInputs.nth(0).inputValue()).toBe('0');
 });
 
@@ -185,7 +179,7 @@ test('should persist scores across multiple hands', async ({ page }) => {
   await setupGameWithPlayers(page, ['Alice', 'Bob']);
 
   // Hand 1: Alice 15, Bob 20
-  let scoreInputs = page.locator('.p-inputnumber input');
+  let scoreInputs = page.locator('.score-input');
   await scoreInputs.nth(0).fill('15');
   await scoreInputs.nth(1).fill('20');
 
@@ -202,7 +196,7 @@ test('should persist scores across multiple hands', async ({ page }) => {
   await nextHandButton.click();
 
   // Hand 2: Alice 5, Bob 10
-  scoreInputs = page.locator('.p-inputnumber input');
+  scoreInputs = page.locator('.score-input');
   await scoreInputs.nth(0).fill('5');
   await scoreInputs.nth(1).fill('10');
 
@@ -231,7 +225,7 @@ test('should handle edge case with maximum penalty score', async ({ page }) => {
   await setupGameWithPlayers(page, ['Player1', 'Player2']);
 
   // Try to enter high score
-  const scoreInput = page.locator('.p-inputnumber input').first();
+  const scoreInput = page.locator('.score-input').first();
   await scoreInput.fill('999');
 
   expect(await scoreInput.inputValue()).toBe('999');
@@ -249,15 +243,14 @@ test('should handle three player game with mixed completions', async ({ page }) 
   await setupGameWithPlayers(page, ['Alice', 'Bob', 'Charlie']);
 
   // Enter various scores
-  const scoreInputs = page.locator('.p-inputnumber input');
+  const scoreInputs = page.locator('.score-input');
   await scoreInputs.nth(0).fill('10'); // Alice
   await scoreInputs.nth(1).fill('0'); // Bob
   await scoreInputs.nth(2).fill('30'); // Charlie
 
   // Mark some as completed
-  const checkboxes = page.locator('.p-checkbox-input');
-  await checkboxes.nth(0).click(); // Alice completed
-  await checkboxes.nth(2).click(); // Charlie completed
+  await page.getByRole('checkbox').nth(0).check(); // Alice completed
+  await page.getByRole('checkbox').nth(2).check(); // Charlie completed
 
   // Submit
   const endButton = page.locator('button', { hasText: 'End Hand' });
