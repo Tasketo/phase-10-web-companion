@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { Card } from 'primereact/card';
-import { Button } from 'primereact/button';
-import { InputNumber } from 'primereact/inputnumber';
-import { Checkbox } from 'primereact/checkbox';
+import { Button, Card, Input } from '@chakra-ui/react';
 import type { GameState, Player, HandResult } from '../helpers/gameState';
 import './GameScreen.css';
 
@@ -23,8 +20,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameState, onGameStateChange, o
   const { t } = useTranslation();
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [playerScores, setPlayerScores] = useState<PlayerHandScore[]>(
-    gameState.players.map((p) => ({
-      playerId: p.id,
+    gameState.players.map((player) => ({
+      playerId: player.id,
       penaltyScore: 0,
       completedPhase: false,
     })),
@@ -34,8 +31,8 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameState, onGameStateChange, o
     if (phaseIndex < 0 || phaseIndex >= gameState.phases.length) {
       return t('game.gameComplete');
     }
+
     const phase = gameState.phases[phaseIndex];
-    // Map description to translation key
     const descriptionToKeyMap: Record<string, string> = {
       '2 sets of 3': 'phaseDescriptions.twoSetsOfThree',
       '1 set of 3 + 1 run of 4': 'phaseDescriptions.oneSetOfThreeAndOneRunOfFour',
@@ -54,36 +51,37 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameState, onGameStateChange, o
       '1 set of 2 + 1 set of 3 + 1 set of 4': 'phaseDescriptions.oneSetOfTwoAndOneSetOfThreeAndOneSetOfFour',
     };
     const translationKey = descriptionToKeyMap[phase.description];
-    if (translationKey) {
-      return `Phase ${phaseIndex + 1}: ${t(translationKey)}`;
-    }
-    // Fallback to raw description
-    return `Phase ${phaseIndex + 1}: ${phase.description}`;
+    return `Phase ${phaseIndex + 1}: ${translationKey ? t(translationKey) : phase.description}`;
   };
 
   const handlePenaltyChange = (playerId: string, score: number) => {
-    setPlayerScores((prev) => prev.map((ps) => (ps.playerId === playerId ? { ...ps, penaltyScore: score || 0 } : ps)));
+    setPlayerScores((prev) =>
+      prev.map((playerScore) =>
+        playerScore.playerId === playerId ? { ...playerScore, penaltyScore: score || 0 } : playerScore,
+      ),
+    );
   };
 
   const handleCompletedChange = (playerId: string, completed: boolean) => {
-    setPlayerScores((prev) => prev.map((ps) => (ps.playerId === playerId ? { ...ps, completedPhase: completed } : ps)));
+    setPlayerScores((prev) =>
+      prev.map((playerScore) =>
+        playerScore.playerId === playerId ? { ...playerScore, completedPhase: completed } : playerScore,
+      ),
+    );
   };
 
   const handleEndHand = () => {
-    // Create hand result
     const handResult: HandResult = {
       handNumber: gameState.currentHand,
       playerScores: {},
       completedPhases: {},
     };
 
-    // Update players with new scores and phases
     const updatedPlayers: Player[] = gameState.players.map((player) => {
-      const handScore = playerScores.find((ps) => ps.playerId === player.id);
+      const handScore = playerScores.find((score) => score.playerId === player.id);
       if (!handScore) return player;
 
       const newPhaseIndex = handScore.completedPhase ? player.currentPhaseIndex + 1 : player.currentPhaseIndex;
-
       handResult.playerScores[player.id] = handScore.penaltyScore;
       handResult.completedPhases[player.id] = handScore.completedPhase ? newPhaseIndex : -1;
 
@@ -94,21 +92,18 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameState, onGameStateChange, o
       };
     });
 
-    const newGameState: GameState = {
+    onGameStateChange({
       ...gameState,
       players: updatedPlayers,
       handResults: [...gameState.handResults, handResult],
-    };
-
-    onGameStateChange(newGameState);
+    });
     setShowLeaderboard(true);
   };
 
   const handleNextHand = () => {
-    // Reset scores for next hand
     setPlayerScores(
-      gameState.players.map((p) => ({
-        playerId: p.id,
+      gameState.players.map((player) => ({
+        playerId: player.id,
         penaltyScore: 0,
         completedPhase: false,
       })),
@@ -116,7 +111,6 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameState, onGameStateChange, o
     setShowLeaderboard(false);
   };
 
-  // Sort players by score (lowest score first)
   const sortedPlayers = [...gameState.players].sort((a, b) => a.totalScore - b.totalScore);
 
   return (
@@ -136,82 +130,94 @@ const GameScreen: React.FC<GameScreenProps> = ({ gameState, onGameStateChange, o
             <span>{gameState.currentHand}</span>
           </Trans>
         </h1>
-        <Button label={t('game.resetGameButton')} icon="pi pi-refresh" severity="warning" onClick={onResetGame} text />
+        <Button variant="ghost" colorPalette="orange" onClick={onResetGame}>
+          {t('game.resetGameButton')}
+        </Button>
       </header>
 
       <div className="game-content">
         {!showLeaderboard ? (
-          <Card>
-            <h2>{t('game.enterScoresTitle')}</h2>
-            <div className="score-entry">
-              {gameState.players.map((player) => {
-                const handScore = playerScores.find((ps) => ps.playerId === player.id);
-                return (
-                  <div key={player.id} className="player-entry">
-                    <div className="player-info">
-                      <div className="player-name">{player.name}</div>
-                      <div className="player-phase">{getPhaseDescription(player.currentPhaseIndex)}</div>
-                    </div>
-
-                    <div className="score-inputs">
-                      <div className="input-group">
-                        <label>{t('game.penaltyPointsLabel')}</label>
-                        <InputNumber
-                          value={handScore?.penaltyScore || 0}
-                          onValueChange={(e) => handlePenaltyChange(player.id, e.value || 0)}
-                          min={0}
-                          max={999}
-                          useGrouping={false}
-                        />
+          <Card.Root className="game-card">
+            <Card.Body>
+              <h2>{t('game.enterScoresTitle')}</h2>
+              <div className="score-entry">
+                {gameState.players.map((player) => {
+                  const handScore = playerScores.find((score) => score.playerId === player.id);
+                  return (
+                    <div key={player.id} className="player-entry">
+                      <div className="player-info">
+                        <div className="player-name">{player.name}</div>
+                        <div className="player-phase">{getPhaseDescription(player.currentPhaseIndex)}</div>
                       </div>
 
-                      <div className="input-group checkbox-group">
-                        <Checkbox
-                          inputId={`completed-${player.id}`}
-                          checked={handScore?.completedPhase || false}
-                          onChange={(e) => handleCompletedChange(player.id, e.checked || false)}
-                        />
-                        <label htmlFor={`completed-${player.id}`}>{t('game.completedPhaseLabel')}</label>
+                      <div className="score-inputs">
+                        <div className="input-group">
+                          <label htmlFor={`score-${player.id}`}>{t('game.penaltyPointsLabel')}</label>
+                          <Input
+                            id={`score-${player.id}`}
+                            className="score-input"
+                            type="number"
+                            value={handScore?.penaltyScore || 0}
+                            onChange={(event) => handlePenaltyChange(player.id, Number(event.target.value) || 0)}
+                            min={0}
+                            max={999}
+                          />
+                        </div>
+
+                        <div className="input-group checkbox-group">
+                          <input
+                            type="checkbox"
+                            id={`completed-${player.id}`}
+                            checked={handScore?.completedPhase || false}
+                            onChange={(event) => handleCompletedChange(player.id, event.target.checked)}
+                          />
+                          <label htmlFor={`completed-${player.id}`}>{t('game.completedPhaseLabel')}</label>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
 
-            <Button label={t('game.endHandButton')} onClick={handleEndHand} className="end-hand-btn" />
-          </Card>
+              <Button className="end-hand-btn" colorPalette="purple" onClick={handleEndHand}>
+                {t('game.endHandButton')}
+              </Button>
+            </Card.Body>
+          </Card.Root>
         ) : (
-          <Card>
-            <h2>{t('game.leaderboardTitle')}</h2>
-            <div className="leaderboard">
-              {sortedPlayers.map((player, index) => (
-                <div key={player.id} className="leaderboard-entry">
-                  <div key={player.id} className="leaderboard-row">
-                    <span className="rank">#{index + 1}</span>
-                    <span className="name">{player.name}</span>
-                    <span className="score">
-                      <Trans i18nKey="leaderboard.totalScore">{{ score: player.totalScore }} pts</Trans>
-                    </span>
+          <Card.Root className="game-card">
+            <Card.Body>
+              <h2>{t('game.leaderboardTitle')}</h2>
+              <div className="leaderboard">
+                {sortedPlayers.map((player, index) => (
+                  <div key={player.id} className="leaderboard-entry">
+                    <div className="leaderboard-row">
+                      <span className="rank">#{index + 1}</span>
+                      <span className="name">{player.name}</span>
+                      <span className="score">
+                        <Trans i18nKey="leaderboard.totalScore">{{ score: player.totalScore }} pts</Trans>
+                      </span>
+                    </div>
+                    <div>
+                      <span className="phase">{getPhaseDescription(player.currentPhaseIndex)}</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="phase">{getPhaseDescription(player.currentPhaseIndex)}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Button
-              label={t('game.playNextHandButton')}
-              onClick={() => {
-                handleNextHand();
-                const newState: GameState = {
-                  ...gameState,
-                  currentHand: gameState.currentHand + 1,
-                };
-                onGameStateChange(newState);
-              }}
-            />
-          </Card>
+                ))}
+              </div>
+              <Button
+                colorPalette="purple"
+                onClick={() => {
+                  handleNextHand();
+                  onGameStateChange({
+                    ...gameState,
+                    currentHand: gameState.currentHand + 1,
+                  });
+                }}
+              >
+                {t('game.playNextHandButton')}
+              </Button>
+            </Card.Body>
+          </Card.Root>
         )}
       </div>
     </div>

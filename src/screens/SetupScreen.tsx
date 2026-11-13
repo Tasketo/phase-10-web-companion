@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { Button } from 'primereact/button';
-import { InputNumber } from 'primereact/inputnumber';
-import { InputText } from 'primereact/inputtext';
-import { Card } from 'primereact/card';
+import { Button, Card, Input } from '@chakra-ui/react';
 
 import { getClassicPhases, generateRandomPhases, type Phase } from '../helpers/phases';
 import './SetupScreen.css';
@@ -19,7 +16,6 @@ interface SetupScreenProps {
 
 type SetupStep = 'playerCount' | 'playerNames' | 'phaseSelection' | 'phaseDisplay';
 
-// Mapping from phase descriptions to translation keys
 const descriptionToKeyMap: Record<string, string> = {
   '2 sets of 3': 'phaseDescriptions.twoSetsOfThree',
   '1 set of 3 + 1 run of 4': 'phaseDescriptions.oneSetOfThreeAndOneRunOfFour',
@@ -47,7 +43,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame }) => {
   const [selectedPhases, setSelectedPhases] = useState<Phase[]>([]);
 
   const handlePlayerCountChange = (value: number | null) => {
-    if (value && value > 0 && value <= 10) {
+    if (value !== null && Number.isInteger(value) && value >= 2 && value <= 10) {
       setPlayerCount(value);
       setPlayerNames(Array(value).fill(''));
     }
@@ -74,21 +70,12 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame }) => {
 
   const handlePhaseSetTypeSelected = (type: 'classic' | 'random') => {
     setPhaseSetType(type);
-
-    if (type === 'classic') {
-      const classic = getClassicPhases();
-      setSelectedPhases(classic);
-      setCurrentStep('phaseDisplay');
-    } else {
-      const random = generateRandomPhases(10);
-      setSelectedPhases(random);
-      setCurrentStep('phaseDisplay');
-    }
+    setSelectedPhases(type === 'classic' ? getClassicPhases() : generateRandomPhases(10));
+    setCurrentStep('phaseDisplay');
   };
 
   const handleRegeneratePhases = () => {
-    const random = generateRandomPhases(10);
-    setSelectedPhases(random);
+    setSelectedPhases(generateRandomPhases(10));
   };
 
   const handleStartGame = () => {
@@ -101,143 +88,141 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ onStartGame }) => {
     }
   };
 
-  // Helper function to get translated phase display name
   const getPhaseDisplayName = (phase: Phase, index: number): string => {
-    // Try to find a matching description in the mapping (covers all phases)
     const translationKey = descriptionToKeyMap[phase.description];
-    if (translationKey) {
-      return `Phase ${index + 1}: ${t(translationKey)}`;
-    }
-
-    // Fallback to raw description
-    return `Phase ${index + 1}: ${phase.description}`;
+    return `Phase ${index + 1}: ${translationKey ? t(translationKey) : phase.description}`;
   };
 
   const allNamesEntered = playerNames.length > 0 && playerNames.every((name) => name.trim());
 
   return (
     <div className="setup-screen">
-      <Card className="setup-card">
-        <div className="language-switcher">
-          <Button size="small" label="English" severity="help" text onClick={() => i18n.changeLanguage('en')} />
-          <Button size="small" label="Deutsch" severity="help" text onClick={() => i18n.changeLanguage('de')} />
-        </div>
+      <Card.Root className="setup-card">
+        <Card.Body padding={0}>
+          <div className="language-switcher">
+            <Button size="sm" variant="ghost" colorPalette="purple" onClick={() => i18n.changeLanguage('en')}>
+              English
+            </Button>
+            <Button size="sm" variant="ghost" colorPalette="purple" onClick={() => i18n.changeLanguage('de')}>
+              Deutsch
+            </Button>
+          </div>
 
-        <div className="setup-content">
-          <h1>{t('setup.title')}</h1>
-          <p className="subtitle">{t('setup.subtitle')}</p>
+          <div className="setup-content">
+            <h1>{t('setup.title')}</h1>
+            <p className="subtitle">{t('setup.subtitle')}</p>
 
-          {/* Step 1: Player Count */}
-          {currentStep === 'playerCount' && (
-            <div className="player-count-section">
-              <label>{t('setup.playerCountLabel')}</label>
-              <InputNumber
-                value={playerCount}
-                onValueChange={(e) => handlePlayerCountChange(e.value ?? null)}
-                min={2}
-                max={10}
-                showButtons
-              />
-              <Button label={t('setup.continueButton')} onClick={handleContinue} disabled={!playerCount} />
-            </div>
-          )}
-
-          {/* Step 2: Player Names */}
-          {currentStep === 'playerNames' && (
-            <div className="player-names-section">
-              <h2>{t('setup.playerNamesTitle')}</h2>
-              {playerNames.map((name, index) => (
-                <div key={index} className="name-input-group">
-                  <label>
-                    <Trans i18nKey="setup.playerLabel" values={{ number: index + 1 }}>
-                      Player <span>{index + 1}</span>
-                    </Trans>
-                  </label>
-                  <InputText
-                    value={name}
-                    onChange={(e) => handleNameChange(index, e.target.value)}
-                    placeholder={t('setup.playerNamePlaceholder')}
-                    onKeyUp={(e) => {
-                      if (e.key === 'Enter' && allNamesEntered) {
-                        handleProceedToPhaseSelection();
-                      }
-                    }}
-                  />
-                </div>
-              ))}
-              <div className="button-group">
-                <Button
-                  label={t('setup.backButton')}
-                  onClick={() => setCurrentStep('playerCount')}
-                  severity="secondary"
+            {currentStep === 'playerCount' && (
+              <div className="player-count-section">
+                <label htmlFor="player-count">{t('setup.playerCountLabel')}</label>
+                <Input
+                  id="player-count"
+                  type="text"
+                  inputMode="numeric"
+                  value={playerCount ?? ''}
+                  onChange={(event) => {
+                    const value = Number(event.target.value);
+                    handlePlayerCountChange(Number.isNaN(value) ? null : value);
+                  }}
+                  min={2}
+                  max={10}
                 />
-                <Button
-                  label={t('setup.continueButton')}
-                  onClick={handleProceedToPhaseSelection}
-                  disabled={!allNamesEntered}
-                />
+                <Button colorPalette="purple" onClick={handleContinue} disabled={!playerCount}>
+                  {t('setup.continueButton')}
+                </Button>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Step 3: Phase Selection */}
-          {currentStep === 'phaseSelection' && (
-            <div className="phase-selection-section">
-              <h2>{t('setup.phaseSelectionTitle')}</h2>
-              <p>{t('setup.phaseSelectionDescription')}</p>
-              <div className="phase-buttons-group">
-                <Button
-                  label={t('setup.classicPhasesButton')}
-                  onClick={() => handlePhaseSetTypeSelected('classic')}
-                  className="phase-button"
-                />
-                <Button
-                  label={t('setup.randomPhasesButton')}
-                  onClick={() => handlePhaseSetTypeSelected('random')}
-                  className="phase-button"
-                />
-              </div>
-              <div className="button-group">
-                <Button
-                  label={t('setup.backButton')}
-                  onClick={() => setCurrentStep('playerNames')}
-                  severity="secondary"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Step 4: Phase Display */}
-          {currentStep === 'phaseDisplay' && (
-            <div className="phase-display-section">
-              <h2>{phaseSetType === 'classic' ? t('setup.classicPhaseSet') : t('setup.randomPhaseSet')}</h2>
-              <div className="phases-list">
-                {selectedPhases.map((phase, index) => (
-                  <div key={index} className="phase-item">
-                    {getPhaseDisplayName(phase, index)}
+            {currentStep === 'playerNames' && (
+              <div className="player-names-section">
+                <h2>{t('setup.playerNamesTitle')}</h2>
+                {playerNames.map((name, index) => (
+                  <div key={index} className="name-input-group">
+                    <label htmlFor={`player-${index}`}>
+                      <Trans i18nKey="setup.playerLabel" values={{ number: index + 1 }}>
+                        Player <span>{index + 1}</span>
+                      </Trans>
+                    </label>
+                    <Input
+                      id={`player-${index}`}
+                      value={name}
+                      onChange={(event) => handleNameChange(index, event.target.value)}
+                      placeholder={t('setup.playerNamePlaceholder')}
+                      onKeyUp={(event) => {
+                        if (event.key === 'Enter' && allNamesEntered) {
+                          handleProceedToPhaseSelection();
+                        }
+                      }}
+                    />
                   </div>
                 ))}
+                <div className="button-group">
+                  <Button variant="outline" colorPalette="gray" onClick={() => setCurrentStep('playerCount')}>
+                    {t('setup.backButton')}
+                  </Button>
+                  <Button colorPalette="purple" onClick={handleProceedToPhaseSelection} disabled={!allNamesEntered}>
+                    {t('setup.continueButton')}
+                  </Button>
+                </div>
               </div>
-              {phaseSetType === 'random' && (
-                <Button
-                  label={t('setup.regeneratePhasesButton')}
-                  onClick={handleRegeneratePhases}
-                  severity="info"
-                  className="regenerate-button"
-                />
-              )}
-              <div className="button-group">
-                <Button
-                  label={t('setup.backButton')}
-                  onClick={() => setCurrentStep('phaseSelection')}
-                  severity="secondary"
-                />
-                <Button label={t('setup.startGameButton')} onClick={handleStartGame} />
+            )}
+
+            {currentStep === 'phaseSelection' && (
+              <div className="phase-selection-section">
+                <h2>{t('setup.phaseSelectionTitle')}</h2>
+                <p>{t('setup.phaseSelectionDescription')}</p>
+                <div className="phase-buttons-group">
+                  <Button
+                    className="phase-button"
+                    colorPalette="purple"
+                    onClick={() => handlePhaseSetTypeSelected('classic')}
+                  >
+                    {t('setup.classicPhasesButton')}
+                  </Button>
+                  <Button
+                    className="phase-button"
+                    colorPalette="purple"
+                    onClick={() => handlePhaseSetTypeSelected('random')}
+                  >
+                    {t('setup.randomPhasesButton')}
+                  </Button>
+                </div>
+                <div className="button-group">
+                  <Button variant="outline" colorPalette="gray" onClick={() => setCurrentStep('playerNames')}>
+                    {t('setup.backButton')}
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      </Card>
+            )}
+
+            {currentStep === 'phaseDisplay' && (
+              <div className="phase-display-section">
+                <h2>{phaseSetType === 'classic' ? t('setup.classicPhaseSet') : t('setup.randomPhaseSet')}</h2>
+                <div className="phases-list">
+                  {selectedPhases.map((phase, index) => (
+                    <div key={index} className="phase-item">
+                      {getPhaseDisplayName(phase, index)}
+                    </div>
+                  ))}
+                </div>
+                {phaseSetType === 'random' && (
+                  <Button className="regenerate-button" colorPalette="purple" onClick={handleRegeneratePhases}>
+                    {t('setup.regeneratePhasesButton')}
+                  </Button>
+                )}
+                <div className="button-group">
+                  <Button variant="outline" colorPalette="gray" onClick={() => setCurrentStep('phaseSelection')}>
+                    {t('setup.backButton')}
+                  </Button>
+                  <Button colorPalette="purple" onClick={handleStartGame}>
+                    {t('setup.startGameButton')}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </Card.Body>
+      </Card.Root>
     </div>
   );
 };

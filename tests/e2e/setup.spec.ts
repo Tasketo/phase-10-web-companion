@@ -6,6 +6,26 @@ test('should display the setup screen on initial load', async ({ page }) => {
   await expect(page.locator('h1')).toContainText('Phase 10 Web Companion');
 });
 
+test('should keep overflowing setup content within the screen', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 480 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Continue' }).click();
+
+  const playerInputs = page.locator('input');
+  await playerInputs.nth(0).fill('Alice');
+  await playerInputs.nth(1).fill('Bob');
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await page.getByRole('button', { name: 'Classic Phases' }).click();
+
+  const setupScreen = page.locator('.setup-screen');
+  expect(await setupScreen.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(true);
+  await setupScreen.evaluate((element) => {
+    element.scrollTop = element.scrollHeight;
+  });
+  expect(await setupScreen.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+});
+
 test('should provide language switching functionality', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('button', { hasText: 'English' })).toBeVisible();
